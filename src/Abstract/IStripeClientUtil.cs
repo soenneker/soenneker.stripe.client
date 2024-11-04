@@ -1,5 +1,6 @@
 using Stripe;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Soenneker.Stripe.Client.Abstract;
@@ -9,5 +10,5 @@ namespace Soenneker.Stripe.Client.Abstract;
 /// </summary>
 public interface IStripeClientUtil : IDisposable, IAsyncDisposable
 {
-    ValueTask<StripeClient> Get();
+    ValueTask<StripeClient> Get(CancellationToken cancellationToken = default);
 }

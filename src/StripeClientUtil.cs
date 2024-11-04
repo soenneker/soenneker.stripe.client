@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -23,11 +24,11 @@ public class StripeClientUtil : IStripeClientUtil
     {
         _httpClientCache = httpClientCache;
 
-        _client = new AsyncSingleton<StripeClient>(async () =>
+        _client = new AsyncSingleton<StripeClient>(async (cancellationToken, _) =>
         {
             logger.LogDebug("Initializing Stripe client...");
 
-            HttpClient httpClient = await _httpClientCache.Get(nameof(StripeClientUtil)).NoSync();
+            HttpClient httpClient = await _httpClientCache.Get(nameof(StripeClientUtil), null, cancellationToken).NoSync();
 
             var stripeClient = new SystemNetHttpClient(httpClient);
 
@@ -37,9 +38,9 @@ public class StripeClientUtil : IStripeClientUtil
         });
     }
 
-    public ValueTask<StripeClient> Get()
+    public ValueTask<StripeClient> Get(CancellationToken cancellationToken = default)
     {
-        return _client.Get();
+        return _client.Get(cancellationToken);
     }
 
     public async ValueTask DisposeAsync()
@@ -55,7 +56,7 @@ public class StripeClientUtil : IStripeClientUtil
     {
         GC.SuppressFinalize(this);
 
-        _httpClientCache.Remove(nameof(StripeClientUtil));
+        _httpClientCache.RemoveSync(nameof(StripeClientUtil));
 
         _client.Dispose();
     }
