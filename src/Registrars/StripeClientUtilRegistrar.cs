@@ -16,8 +16,8 @@ public static class StripeClientUtilRegistrar
     /// <remarks>This is most likely what you want.</remarks>
     public static IServiceCollection AddStripeClientUtilAsSingleton(this IServiceCollection services)
     {
-        services.AddHttpClientCache();
-        services.TryAddSingleton<IStripeClientUtil, StripeClientUtil>();
+        services.AddHttpClientCacheAsSingleton()
+                .TryAddSingleton<IStripeClientUtil, StripeClientUtil>();
 
         return services;
     }
@@ -27,8 +27,8 @@ public static class StripeClientUtilRegistrar
     /// </summary>
     public static IServiceCollection AddStripeClientUtilAsScoped(this IServiceCollection services)
     {
-        services.AddHttpClientCache();
-        services.TryAddScoped<IStripeClientUtil, StripeClientUtil>();
+        services.AddHttpClientCacheAsSingleton()
+                .TryAddScoped<IStripeClientUtil, StripeClientUtil>();
 
         return services;
     }
