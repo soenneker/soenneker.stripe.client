@@ -14,18 +14,22 @@ public static class StripeClientUtilRegistrar
     /// Adds <see cref="IStripeClientUtil"/> as a singleton service. <para/>
     /// </summary>
     /// <remarks>This is most likely what you want.</remarks>
-    public static void AddStripeClientUtilAsSingleton(this IServiceCollection services)
+    public static IServiceCollection AddStripeClientUtilAsSingleton(this IServiceCollection services)
     {
         services.AddHttpClientCache();
         services.TryAddSingleton<IStripeClientUtil, StripeClientUtil>();
+
+        return services;
     }
 
     /// <summary>
     /// Adds <see cref="IStripeClientUtil"/> as a scoped service. <para/>
     /// </summary>
-    public static void AddStripeClientUtilAsScoped(this IServiceCollection services)
+    public static IServiceCollection AddStripeClientUtilAsScoped(this IServiceCollection services)
     {
         services.AddHttpClientCache();
         services.TryAddScoped<IStripeClientUtil, StripeClientUtil>();
+
+        return services;
     }
 }
