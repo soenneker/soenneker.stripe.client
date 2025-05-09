@@ -28,7 +28,7 @@ public class StripeClientUtil : IStripeClientUtil
         {
             logger.LogDebug("Initializing Stripe client...");
 
-            HttpClient httpClient = await _httpClientCache.Get(nameof(StripeClientUtil), null, cancellationToken).NoSync();
+            HttpClient httpClient = await _httpClientCache.Get(nameof(StripeClientUtil), () => null, cancellationToken).NoSync();
 
             var stripeClient = new SystemNetHttpClient(httpClient);
 
