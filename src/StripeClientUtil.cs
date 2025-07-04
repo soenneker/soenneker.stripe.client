@@ -14,7 +14,7 @@ using Stripe;
 namespace Soenneker.Stripe.Client;
 
 ///<inheritdoc cref="IStripeClientUtil"/>
-public class StripeClientUtil : IStripeClientUtil
+public sealed class StripeClientUtil : IStripeClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
 
@@ -45,8 +45,6 @@ public class StripeClientUtil : IStripeClientUtil
 
     public async ValueTask DisposeAsync()
     {
-        GC.SuppressFinalize(this);
-
         await _httpClientCache.Remove(nameof(StripeClientUtil)).NoSync();
 
         await _client.DisposeAsync().NoSync();
@@ -54,8 +52,6 @@ public class StripeClientUtil : IStripeClientUtil
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
-
         _httpClientCache.RemoveSync(nameof(StripeClientUtil));
 
         _client.Dispose();
