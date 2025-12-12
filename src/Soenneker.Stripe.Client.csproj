@@ -42,7 +42,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
-        <PackageReference Include="Soenneker.Extensions.Configuration" Version="4.0.741" />
+        <PackageReference Include="Soenneker.Extensions.Configuration" Version="4.0.742" />
         <PackageReference Include="Soenneker.Utils.AsyncSingleton" Version="4.0.720" />
         <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="4.0.1774" />
         <PackageReference Include="Stripe.net" Version="50.0.0" />
