@@ -24,7 +24,7 @@ public sealed class StripeClientUtil : IStripeClientUtil
     {
         _httpClientCache = httpClientCache;
 
-        _client = new AsyncSingleton<StripeClient>(async (cancellationToken, _) =>
+        _client = new AsyncSingleton<StripeClient>(async (cancellationToken) =>
         {
             logger.LogDebug("Initializing Stripe client...");
 
