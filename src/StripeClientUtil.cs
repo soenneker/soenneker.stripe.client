@@ -20,22 +20,29 @@ public sealed class StripeClientUtil : IStripeClientUtil
 
     private readonly AsyncSingleton<StripeClient> _client;
 
+    private readonly ILogger<StripeClientUtil> _logger;
+    private readonly IConfiguration _config;
+
     public StripeClientUtil(ILogger<StripeClientUtil> logger, IHttpClientCache httpClientCache, IConfiguration config)
     {
+        _logger = logger;
+        _config = config;
         _httpClientCache = httpClientCache;
 
-        _client = new AsyncSingleton<StripeClient>(async (cancellationToken) =>
-        {
-            logger.LogDebug("Initializing Stripe client...");
+        _client = new AsyncSingleton<StripeClient>(CreateClient);
+    }
 
-            HttpClient httpClient = await _httpClientCache.Get(nameof(StripeClientUtil), static () => null, cancellationToken).NoSync();
+    private async ValueTask<StripeClient> CreateClient(CancellationToken cancellationToken)
+    {
+        _logger.LogDebug("Initializing Stripe client...");
 
-            var stripeClient = new SystemNetHttpClient(httpClient);
+        HttpClient httpClient = await _httpClientCache.Get(nameof(StripeClientUtil), static () => null, cancellationToken).NoSync();
 
-            var secretKey = config.GetValueStrict<string>("Stripe:SecretKey");
+        var stripeClient = new SystemNetHttpClient(httpClient);
 
-            return new StripeClient(secretKey, null, stripeClient);
-        });
+        var secretKey = _config.GetValueStrict<string>("Stripe:SecretKey");
+
+        return new StripeClient(secretKey, null, stripeClient);
     }
 
     public ValueTask<StripeClient> Get(CancellationToken cancellationToken = default)
