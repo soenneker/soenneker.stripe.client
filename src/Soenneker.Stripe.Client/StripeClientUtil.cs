@@ -49,6 +49,10 @@ public sealed class StripeClientUtil : IStripeClientUtil
         return _client.Get(cancellationToken);
     }
 
+    /// <summary>
+    /// Asynchronously releases resources used by the current instance.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public async ValueTask DisposeAsync()
     {
         await _httpClientCache.Remove(nameof(StripeClientUtil)).NoSync();
@@ -56,6 +60,9 @@ public sealed class StripeClientUtil : IStripeClientUtil
         await _client.DisposeAsync().NoSync();
     }
 
+    /// <summary>
+    /// Releases resources used by the current instance.
+    /// </summary>
     public void Dispose()
     {
         _httpClientCache.RemoveSync(nameof(StripeClientUtil));
