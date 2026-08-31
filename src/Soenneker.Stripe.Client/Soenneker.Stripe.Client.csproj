@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Description>A .NET typesafe implementation of Stripe's StripeClient</Description>
+        <Description>Provides a lazily initialized Stripe SDK client with managed HTTP client ownership.</Description>
         <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.Stripe.Client</AssemblyName>

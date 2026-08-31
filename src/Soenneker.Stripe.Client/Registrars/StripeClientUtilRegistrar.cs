@@ -6,12 +6,12 @@ using Soenneker.Utils.HttpClientCache.Registrar;
 namespace Soenneker.Stripe.Client.Registrars;
 
 /// <summary>
-/// A .NET typesafe implementation of Stripe's StripeClient
+/// Registers the lazily initialized Stripe SDK client.
 /// </summary>
 public static class StripeClientUtilRegistrar
 {
     /// <summary>
-    /// Adds <see cref="IStripeClientUtil"/> as a singleton service. <para/>
+    /// Adds the Stripe client utility as a singleton service. <para/>
     /// </summary>
     /// <remarks>This is most likely what you want.</remarks>
     public static IServiceCollection AddStripeClientUtilAsSingleton(this IServiceCollection services)
@@ -22,7 +22,7 @@ public static class StripeClientUtilRegistrar
     }
 
     /// <summary>
-    /// Adds <see cref="IStripeClientUtil"/> as a scoped service. <para/>
+    /// Adds the Stripe client utility as a scoped service. Each scope owns a separate HTTP client. <para/>
     /// </summary>
     public static IServiceCollection AddStripeClientUtilAsScoped(this IServiceCollection services)
     {

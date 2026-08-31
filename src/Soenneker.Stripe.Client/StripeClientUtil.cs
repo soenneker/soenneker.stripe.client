@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,10 +13,10 @@ using Stripe;
 
 namespace Soenneker.Stripe.Client;
 
-///<inheritdoc cref="IStripeClientUtil"/>
 public sealed class StripeClientUtil : IStripeClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
+    private readonly string _cacheKey = $"{nameof(StripeClientUtil)}-{Guid.NewGuid():N}";
 
     private readonly AsyncSingleton<StripeClient> _client;
 
@@ -35,7 +36,7 @@ public sealed class StripeClientUtil : IStripeClientUtil
     {
         _logger.LogDebug("Initializing Stripe client...");
 
-        HttpClient httpClient = await _httpClientCache.Get(nameof(StripeClientUtil), static () => null, cancellationToken).NoSync();
+        HttpClient httpClient = await _httpClientCache.Get(_cacheKey, static () => null, cancellationToken).NoSync();
 
         var stripeClient = new SystemNetHttpClient(httpClient);
 
@@ -49,23 +50,16 @@ public sealed class StripeClientUtil : IStripeClientUtil
         return _client.Get(cancellationToken);
     }
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public async ValueTask DisposeAsync()
     {
-        await _httpClientCache.Remove(nameof(StripeClientUtil)).NoSync();
+        await _httpClientCache.Remove(_cacheKey).NoSync();
 
         await _client.DisposeAsync().NoSync();
     }
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose()
     {
-        _httpClientCache.RemoveSync(nameof(StripeClientUtil));
+        _httpClientCache.RemoveSync(_cacheKey);
 
         _client.Dispose();
     }
