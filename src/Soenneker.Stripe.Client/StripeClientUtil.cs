@@ -13,6 +13,7 @@ using Stripe;
 
 namespace Soenneker.Stripe.Client;
 
+/// <inheritdoc cref="IStripeClientUtil" />
 public sealed class StripeClientUtil : IStripeClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
