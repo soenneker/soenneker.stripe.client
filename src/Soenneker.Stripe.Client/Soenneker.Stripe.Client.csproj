@@ -45,7 +45,7 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.Configuration" Version="4.0.875" />
-        <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="4.0.2059" />
+        <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="4.0.2061" />
         <PackageReference Include="Stripe.net" Version="52.4.1" />
     </ItemGroup>
 </Project>
