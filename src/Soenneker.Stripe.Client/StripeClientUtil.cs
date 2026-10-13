@@ -41,7 +41,7 @@ public sealed class StripeClientUtil : IStripeClientUtil
 
         var stripeClient = new SystemNetHttpClient(httpClient);
 
-        var secretKey = _config.GetValueStrict<string>("Stripe:SecretKey");
+        var secretKey = _config.GetStringStrict("Stripe:SecretKey");
 
         return new StripeClient(secretKey, null, stripeClient);
     }
