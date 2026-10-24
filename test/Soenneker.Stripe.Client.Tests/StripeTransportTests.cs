@@ -62,4 +62,13 @@ public sealed class StripeTransportTests
         catch (CryptographicException) { return; }
         throw new InvalidOperationException("An invalid webhook signature was accepted.");
     }
+
+    [Test]
+    public void Expandable_ids_and_metadata_round_trip_through_generated_models()
+    {
+        var unexpanded = StripeModelUtil.Parse("{\"id\":\"pi_test\",\"customer\":\"cus_test\",\"metadata\":{\"organization\":\"org_test\"}}", PaymentIntent.CreateFromDiscriminatorValue);
+        var expanded = StripeModelUtil.Parse("{\"id\":\"pi_test\",\"customer\":{\"id\":\"cus_test\",\"object\":\"customer\"}}", PaymentIntent.CreateFromDiscriminatorValue);
+        if (unexpanded.Customer.GetId() != "cus_test" || expanded.Customer.GetId() != "cus_test" || unexpanded.Metadata.GetValueOrDefault("organization") != "org_test")
+            throw new InvalidOperationException("Expandable identifiers or metadata were lost while parsing Stripe JSON.");
+    }
 }
