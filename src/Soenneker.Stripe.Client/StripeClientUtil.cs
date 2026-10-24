@@ -46,7 +46,9 @@ public sealed class StripeClientUtil : IStripeClientUtil
             BaseAddress = new Uri("https://api.stripe.com"),
             DefaultRequestHeaders = new Dictionary<string, string>
             {
-                ["Authorization"] = $"Bearer {state.config.GetStringStrict("Stripe:SecretKey")}"
+                ["Authorization"] = $"Bearer {state.config.GetStringStrict("Stripe:SecretKey")}",
+                // Matches the specification used by Soenneker.Stripe.OpenApiClient 4.0.140.
+                ["Stripe-Version"] = "2026-09-30.endive"
             },
             DelegatingHandlerFactories =
             [
