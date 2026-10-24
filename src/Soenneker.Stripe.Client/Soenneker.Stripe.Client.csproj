@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Description>Provides a lazily initialized Stripe SDK client with managed HTTP client ownership.</Description>
+        <Description>Provides a lazily initialized Stripe OpenAPI client with managed HTTP client ownership.</Description>
         <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.Stripe.Client</AssemblyName>
@@ -47,6 +47,10 @@
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.Configuration" Version="4.0.910" />
         <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="4.0.2128" />
-        <PackageReference Include="Stripe.net" Version="53.0.0" />
+        <PackageReference Include="Soenneker.Stripe.OpenApiClient" Version="4.0.140" />
+        <PackageReference Include="Soenneker.HttpClients.LoggingHandler" Version="4.0.266" />
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Soenneker.Stripe.Client.Tests" />
     </ItemGroup>
 </Project>

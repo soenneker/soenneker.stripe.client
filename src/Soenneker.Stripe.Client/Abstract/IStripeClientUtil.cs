@@ -1,4 +1,4 @@
-using Stripe;
+using Soenneker.Stripe.OpenApiClient;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Soenneker.Stripe.Client.Abstract;
 
 /// <summary>
-/// Provides a lazily initialized Stripe SDK client backed by an owned HTTP client.
+/// Provides a lazily initialized Stripe OpenAPI client backed by an owned HTTP client with request and response logging.
 /// </summary>
 public interface IStripeClientUtil : IDisposable, IAsyncDisposable
 {
@@ -15,7 +15,7 @@ public interface IStripeClientUtil : IDisposable, IAsyncDisposable
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task containing the result of the operation.</returns>
-    ValueTask<StripeClient> Get(CancellationToken cancellationToken = default);
+    ValueTask<StripeOpenApiClient> Get(CancellationToken cancellationToken = default);
 
     /// <summary>Removes and disposes the Stripe and HTTP clients owned by this utility.</summary>
     new void Dispose();

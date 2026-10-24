@@ -9,17 +9,21 @@ using Soenneker.Extensions.ValueTask;
 using Soenneker.Stripe.Client.Abstract;
 using Soenneker.Utils.AsyncSingleton;
 using Soenneker.Utils.HttpClientCache.Abstract;
-using Stripe;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
+using Soenneker.Stripe.OpenApiClient;
+using Soenneker.Dtos.HttpClientOptions;
+using Soenneker.HttpClients.LoggingHandler;
+using System.Collections.Generic;
 
 namespace Soenneker.Stripe.Client;
 
-/// <inheritdoc cref="IStripeClientUtil" />
 public sealed class StripeClientUtil : IStripeClientUtil
 {
     private readonly IHttpClientCache _httpClientCache;
-    private readonly string _cacheKey = $"{nameof(StripeClientUtil)}-{Guid.NewGuid():N}";
+    private readonly string _cacheKey = $"{nameof(StripeClientUtil)}-{Guid.NewGuid()}";
 
-    private readonly AsyncSingleton<StripeClient> _client;
+    private readonly AsyncSingleton<StripeOpenApiClient> _client;
 
     private readonly ILogger<StripeClientUtil> _logger;
     private readonly IConfiguration _config;
@@ -30,23 +34,32 @@ public sealed class StripeClientUtil : IStripeClientUtil
         _config = config;
         _httpClientCache = httpClientCache;
 
-        _client = new AsyncSingleton<StripeClient>(CreateClient);
+        _client = new AsyncSingleton<StripeOpenApiClient>(CreateClient);
     }
 
-    private async ValueTask<StripeClient> CreateClient(CancellationToken cancellationToken)
+    private async ValueTask<StripeOpenApiClient> CreateClient(CancellationToken cancellationToken)
     {
         _logger.LogDebug("Initializing Stripe client...");
 
-        HttpClient httpClient = await _httpClientCache.Get(_cacheKey, static () => null, cancellationToken).NoSync();
+        HttpClient httpClient = await _httpClientCache.Get(_cacheKey, (config: _config, logger: _logger), static state => new HttpClientOptions
+        {
+            BaseAddress = new Uri("https://api.stripe.com"),
+            DefaultRequestHeaders = new Dictionary<string, string>
+            {
+                ["Authorization"] = $"Bearer {state.config.GetStringStrict("Stripe:SecretKey")}"
+            },
+            DelegatingHandlerFactories =
+            [
+                () => new StripeQueryHandler(),
+                () => new HttpClientLoggingHandler(state.logger, new HttpClientLoggingOptions { LogLevel = LogLevel.Debug })
+            ]
+        }, cancellationToken).NoSync();
 
-        var stripeClient = new SystemNetHttpClient(httpClient);
-
-        var secretKey = _config.GetStringStrict("Stripe:SecretKey");
-
-        return new StripeClient(secretKey, null, stripeClient);
+        return new StripeOpenApiClient(new HttpClientRequestAdapter(new AnonymousAuthenticationProvider(),
+            serializationWriterFactory: new StripeSerializationWriterFactory(), httpClient: httpClient));
     }
 
-    public ValueTask<StripeClient> Get(CancellationToken cancellationToken = default)
+    public ValueTask<StripeOpenApiClient> Get(CancellationToken cancellationToken = default)
     {
         return _client.Get(cancellationToken);
     }
