@@ -53,7 +53,13 @@ public sealed class StripeClientUtil : IStripeClientUtil
             DelegatingHandlerFactories =
             [
                 () => new StripeQueryHandler(),
-                () => new HttpClientLoggingHandler(state.logger, new HttpClientLoggingOptions { LogLevel = LogLevel.Debug })
+                () => new HttpClientLoggingHandler(state.logger, new HttpClientLoggingOptions
+                {
+                    LogLevel = LogLevel.Debug,
+                    LogRequestBody = true,
+                    LogResponseBody = true,
+                    LogQueryString = true
+                })
             ]
         }, cancellationToken).NoSync();
 
