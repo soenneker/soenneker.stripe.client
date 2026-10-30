@@ -38,7 +38,7 @@ public sealed class StripeTransportTests
         using var http = new HttpClient(new StripeQueryHandler { InnerHandler = handler });
         using var adapter = new HttpClientRequestAdapter(new AnonymousAuthenticationProvider(), serializationWriterFactory: new StripeSerializationWriterFactory(), httpClient: http);
         var api = new StripeOpenApiClient(adapter);
-        await api.V1.Customers.GetAsync(new(), c => { c.QueryParameters.Limit = 100; c.QueryParameters.StartingAfter = "cus_previous"; });
+        await api.V1.Customers.GetAsync(c => { c.QueryParameters.Limit = 100; c.QueryParameters.StartingAfter = "cus_previous"; });
         if (handler.Body != null || !handler.Uri!.Query.Contains("starting_after=cus_previous") || !handler.Uri.Query.Contains("limit=100"))
             throw new InvalidOperationException("GET parameters were not sent in the URL.");
     }
