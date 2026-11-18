@@ -64,6 +64,15 @@ public sealed class StripeTransportTests
     }
 
     [Test]
+    public void Selected_fields_retain_nested_values_and_skip_unselected_properties()
+    {
+        var original = StripeModelUtil.Parse("""{"id":"pi_test","customer":"cus_test","metadata":{"team":"café"}}""", PaymentIntent.CreateFromDiscriminatorValue);
+        var selected = StripeModelUtil.SelectFields(original, PaymentIntent.CreateFromDiscriminatorValue, "id", "metadata", "missing");
+        if (selected.Id != "pi_test" || selected.Customer != null || selected.Metadata.GetValueOrDefault("team") != "café")
+            throw new InvalidOperationException("Selected Stripe fields did not survive serialization.");
+    }
+
+    [Test]
     public void Expandable_ids_and_metadata_round_trip_through_generated_models()
     {
         var unexpanded = StripeModelUtil.Parse("{\"id\":\"pi_test\",\"customer\":\"cus_test\",\"metadata\":{\"organization\":\"org_test\"}}", PaymentIntent.CreateFromDiscriminatorValue);
